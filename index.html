@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Click Image</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #f4f4f9;
+      }
+
+      #controls {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      input[type="file"] {
+        padding: 8px 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      input[type="file"]:hover {
+        border-color: #007bff;
+        background-color: #f0f8ff;
+      }
+
+      button {
+        padding: 10px 16px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #image-container {
+        position: relative;
+        display: inline-block;
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #fff;
+        max-width: 90%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      #image {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+
+      .point {
+        position: absolute;
+        background-color: #ff4757;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+      }
+
+      .point:hover {
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      <input type="file" id="upload" accept="image/*" />
+      <button id="undo">Geri</button>
+      <button id="reset">Sıfırla</button>
+    </div>
+
+    <div id="image-container">
+      <img id="image" />
+    </div>
+
+    <script>
+      let clickCount = 0;
+      let points = [];
+
+      document
+        .getElementById("upload")
+        .addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const img = document.getElementById("image");
+              img.src = e.target.result;
+              img.style.display = "block";
+
+              resetPoints();
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+      document
+        .getElementById("image-container")
+        .addEventListener("click", function (event) {
+          if (event.target.tagName === "IMG") {
+            clickCount++;
+
+            const point = document.createElement("div");
+            point.classList.add("point");
+            point.textContent = clickCount;
+
+            const rect = event.target.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            point.style.left = `${x}px`;
+            point.style.top = `${y}px`;
+
+            this.appendChild(point);
+            points.push(point);
+          }
+        });
+
+      document.getElementById("undo").addEventListener("click", function () {
+        if (points.length > 0) {
+          const lastPoint = points.pop();
+          lastPoint.remove();
+          clickCount--;
+        }
+      });
+
+      document.getElementById("reset").addEventListener("click", resetPoints);
+
+      function resetPoints() {
+        points.forEach((point) => point.remove());
+        points = [];
+        clickCount = 0;
+      }
+    </script>
+  </body>
+</html>
