@@ -17,13 +17,13 @@
         background-color: #000;
       }
 
-    #controls {
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+      #controls {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
 
       input[type="file"] {
         padding: 8px 12px;
@@ -99,6 +99,16 @@
       <input type="file" id="upload" placeholder="salam" accept="image/*" />
       <button id="undo">Geri</button>
       <button id="reset">Sıfırla</button>
+      <script>
+        document
+          .getElementById("reset")
+          .addEventListener("click", function (event) {
+            const confirmReset = confirm("Sıfırlamaq istədiyivə əminsən ?");
+            if (!confirmReset) {
+              event.preventDefault();
+            }
+          });
+      </script>
     </div>
 
     <div id="image-container">
